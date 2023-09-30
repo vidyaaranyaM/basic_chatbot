@@ -8,10 +8,6 @@ from model import NeuralNetwork
 from utils import NltkUtils
 
 
-FLAGS = flags.FLAGS
-flags.DEFINE_string("dataPath", "data.pth", "file where data is stored")
-
-
 class ChatBot:
     def __init__(self,
                  botName="Sam") -> None:
@@ -33,7 +29,7 @@ class ChatBot:
             self.intents = json.load(f)
 
     def loadData(self):
-        data = torch.load(FLAGS.dataPath)
+        data = torch.load("data.pth")
         self.modelState = data['modelState']
         self.inputSize = data['inputSize']
         self.hiddenSize = data['hiddenSize']
@@ -57,9 +53,9 @@ class ChatBot:
         if prob.item() > 0.75:
             for intent in self.intents['intents']:
                 if tag == intent["tag"]:
-                    print(f"{self.botName}: {random.choice(intent['responses'])}")
+                    return random.choice(intent['responses'])
         else:
-            print(f"{self.botName}: I do not understand...")
+            return "I do not understand..."
 
     def chat(self):
         print("Let's chat! (type 'quit' to exit)")
@@ -68,11 +64,9 @@ class ChatBot:
             if sentence == "quit":
                 break
 
-            self.get_response(sentence)
+            print(f"{self.botName}: {self.get_response(sentence)}")
 
-def main(_):
-    bot = ChatBot()
-    bot.chat()
 
 if __name__ == "__main__":
-    app.run(main)
+    bot = ChatBot()
+    bot.chat()
